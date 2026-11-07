@@ -6,7 +6,7 @@
   --nuit: #050d22; --nuit-voile: rgba(5, 13, 34, .72);
   --texte: #e6eefc; --texte-doux: #9fb3d6;
   --cyan: #5fd4ff; --bleu: #7aa2ff; --menthe: #7ee0c3; --orange: #ffb86b; --rose: #ff6b8b;
-  --verre: rgba(8, 20, 48, .62); --verre-clair: rgba(14, 30, 66, .82); --trait: rgba(159, 179, 214, .22);
+  --verre: rgba(8, 20, 48, .62); --verre-clair: rgba(10, 24, 56, .72); --trait: rgba(159, 179, 214, .22);
   --f-ui: "Jost", "Segoe UI", system-ui, sans-serif;
   --f-serif: "Spectral", Georgia, serif;
   --entete-h: calc(64px + env(safe-area-inset-top, 0px));
@@ -35,20 +35,26 @@ body::before {
     linear-gradient(180deg, #07142e 0%, #050d22 60%, #040a1a 100%);
 }
 
-/* La famille se tient au bas de la page ; la place est réservée sous les cartes, rien ne la recouvre */
-body { position: relative; min-height: 100vh; overflow-x: hidden; }
+/* La famille est le fond d'écran : grande, centrée, fixe, derrière les vignettes */
 .fond {
-  position: absolute; left: 0; right: 0; bottom: 0; z-index: -1;
-  display: flex; justify-content: center; pointer-events: none;
+  position: fixed; inset: 0; z-index: -1;
+  overflow: hidden; pointer-events: none;
+  display: flex; justify-content: center; align-items: flex-end;
 }
-.fond svg { width: min(900px, 100%); height: auto; display: block; }
-.vole { animation: monte 6s ease-in infinite; animation-delay: var(--d, 0s); opacity: 0; }
+.fond svg { flex: none; width: min(155vw, 255vh); height: auto; display: block; opacity: .92; overflow: visible; }
+/* Cœurs qui s'élèvent de la famille jusqu'en haut de l'écran, en se balançant */
+.vole {
+  transform-box: fill-box; transform-origin: center;
+  opacity: 0;
+  animation: monte var(--t, 8s) ease-in-out infinite;
+  animation-delay: var(--d, 0s);
+}
 @keyframes monte {
-  0%   { transform: translateY(14px); opacity: 0; }
-  20%  { opacity: .95; }
-  100% { transform: translateY(-46px); opacity: 0; }
+  0%   { transform: translate(0, 12px) scale(.7); opacity: 0; }
+  12%  { opacity: .95; }
+  50%  { transform: translate(var(--dx, 16px), -150px) scale(1); opacity: .9; }
+  100% { transform: translate(calc(var(--dx, 16px) * -.6), -330px) scale(1.15); opacity: 0; }
 }
-
 /* En-tête */
 .entete {
   position: fixed; inset: 0 0 auto 0; z-index: 10;
@@ -65,18 +71,17 @@ body { position: relative; min-height: 100vh; overflow-x: hidden; }
 
 main {
   max-width: 920px; margin: 0 auto;
-  /* bas : hauteur du dessin (900 px de large pour 340 de haut) + un peu d'air */
-  padding: calc(var(--entete-h) + 2.2rem) 1.25rem calc(min(900px, 100vw) * .34 + 1.5rem);
+  padding: calc(var(--entete-h) + 2.2rem) 1.25rem 3rem;
 }
 @media (min-width: 1000px) { main { max-width: 1120px; } }
 
-.hero { text-align: center; margin-bottom: 2rem; }
+.hero { text-align: center; margin-bottom: 2rem; text-shadow: 0 1px 14px rgba(5, 13, 34, .95), 0 0 3px rgba(5, 13, 34, .8); }
 .hero h1 {
   margin: 0; font: 600 clamp(2rem, 6vw, 3.1rem)/1.1 var(--f-ui);
   letter-spacing: -.01em; text-wrap: balance;
 }
 .hero p {
-  margin: .8rem 0 0; font: italic 400 1.2rem/1.4 var(--f-serif); color: var(--texte-doux);
+  margin: .8rem 0 0; font: italic 400 1.2rem/1.4 var(--f-serif); color: #c3d2ee;
 }
 
 /* Cartes en verre */
@@ -89,7 +94,7 @@ main {
   display: flex; flex-direction: column; gap: .5rem;
   padding: 1.4rem 1.5rem;
   border: 1px solid var(--trait); border-radius: 12px;
-  background: var(--verre);
+  background: rgba(6, 16, 40, .64);
   backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
   color: inherit; text-decoration: none;
   transition: border-color .2s, background-color .2s, transform .2s;
@@ -115,5 +120,5 @@ main {
 @media (max-width: 480px) { body { font-size: 16px; } .hero p { font-size: 1.1rem; } }
 @media (prefers-reduced-motion: reduce) {
   .carte { transition: none; }
-  .vole { animation: none; opacity: .8; }
+  .vole { animation: none; opacity: .7; transform: translateY(-60px); }
 }
