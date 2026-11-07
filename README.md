@@ -7,4 +7,4 @@ Portail qui regroupe quatre sites :
 - [RoutineSite](https://mikhub-dev.github.io/RoutineSite/)
 - [CultureGSite](https://mikhub-dev.github.io/CultureGSite/)
 
-Site statique (`index.html` + `style.css`), publié avec GitHub Pages : https://mikhub-dev.github.io/FamZakSites/
+Site statique (`index.html` + `style.css`), publié avec GitHub Pages : https://famzak.github.io/
