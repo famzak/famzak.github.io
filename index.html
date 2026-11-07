@@ -2,48 +2,127 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="description" content="FamZakSites : le portail qui regroupe MathSite, QuantumSite, RoutineSite et CultureGSite.">
   <meta name="robots" content="noindex, nofollow">
   <title>FamZakSites</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Spectral:ital,wght@0,400;1,400&display=swap">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="hero">
-    <h1>FamZak<span>Sites</span></h1>
-    <p>Quatre sites, un seul point d'entrée.</p>
+
+  <!-- Fond : une famille unie sous un grand cœur, quatre couleurs comme les quatre sites -->
+  <div class="fond" aria-hidden="true">
+    <svg viewBox="0 0 1000 340" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="gB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9db8ff"/><stop offset="1" stop-color="#4b6fd6"/></linearGradient>
+        <linearGradient id="gC" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fe3ff"/><stop offset="1" stop-color="#2c9bc4"/></linearGradient>
+        <linearGradient id="gO" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd09a"/><stop offset="1" stop-color="#e8893a"/></linearGradient>
+        <linearGradient id="gM" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a6f0d9"/><stop offset="1" stop-color="#35b393"/></linearGradient>
+        <linearGradient id="gR" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff6b8b"/><stop offset="1" stop-color="#ffb86b"/></linearGradient>
+        <linearGradient id="gP" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffa3b8"/><stop offset="1" stop-color="#e0496e"/></linearGradient>
+        <radialGradient id="sol"><stop offset="0" stop-color="#ffb86b" stop-opacity=".5"/><stop offset="1" stop-color="#ffb86b" stop-opacity="0"/></radialGradient>
+        <radialGradient id="halo"><stop offset="0" stop-color="#ff6b8b" stop-opacity=".30"/><stop offset="1" stop-color="#ff6b8b" stop-opacity="0"/></radialGradient>
+        <filter id="lueur" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="5" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <symbol id="coeur" viewBox="0 0 24 22"><path d="M12 21C4 14 1 10 1 6.5 1 3 3.8 1 6.5 1 9 1 11 2.5 12 4.5 13 2.5 15 1 17.5 1 20.2 1 23 3 23 6.5 23 10 20 14 12 21Z"/></symbol>
+      </defs>
+
+      <!-- lumière du foyer -->
+      <ellipse cx="500" cy="338" rx="470" ry="48" fill="url(#sol)"/>
+      <ellipse cx="500" cy="190" rx="410" ry="175" fill="url(#halo)"/>
+
+      <!-- le grand cœur au-dessus de la famille -->
+      <path transform="translate(-10 0) translate(510 80) scale(1.3) translate(-510 -80)" d="M510 122C462 88 430 62 466 38 488 24 510 38 510 56 510 38 532 24 554 38 590 62 558 88 510 122Z" fill="url(#gR)" opacity=".9" filter="url(#lueur)"/>
+
+      <!-- les bras : tout le monde se tient la main -->
+      <g fill="none" stroke-width="9" stroke-linecap="round">
+        <path d="M230 276 210 312" stroke="#5fcfae"/>
+        <path d="M252 276 310 284" stroke="#5fcfae"/>
+        <path d="M370 204 310 284" stroke="#6c8fe8"/>
+        <path d="M390 204 442 270" stroke="#6c8fe8"/>
+        <path d="M490 292 442 270" stroke="#f0668a"/>
+        <path d="M510 292 558 270" stroke="#f0668a"/>
+        <path d="M610 204 558 270" stroke="#4fb8dc"/>
+        <path d="M630 204 690 284" stroke="#4fb8dc"/>
+        <path d="M748 276 690 284" stroke="#f0a04e"/>
+        <path d="M770 276 790 312" stroke="#f0a04e"/>
+      </g>
+
+      <!-- deux parents et trois enfants -->
+      <g>
+        <circle cx="240" cy="236" r="19" fill="url(#gM)"/>
+        <path d="M218 330Q218 270 240 264 262 270 262 330Z" fill="url(#gM)"/>
+        <circle cx="380" cy="150" r="26" fill="url(#gB)"/>
+        <path d="M348 330Q348 196 380 188 412 196 412 330Z" fill="url(#gB)"/>
+        <circle cx="500" cy="262" r="15" fill="url(#gP)"/>
+        <path d="M487 330Q487 286 500 281 513 286 513 330Z" fill="url(#gP)"/>
+        <circle cx="620" cy="150" r="26" fill="url(#gC)"/>
+        <path d="M588 330Q588 196 620 188 652 196 652 330Z" fill="url(#gC)"/>
+        <circle cx="760" cy="236" r="19" fill="url(#gO)"/>
+        <path d="M738 330Q738 270 760 264 782 270 782 330Z" fill="url(#gO)"/>
+      </g>
+
+      <!-- mains jointes -->
+      <g fill="#fff1d6" filter="url(#lueur)">
+        <circle cx="310" cy="284" r="9"/><circle cx="442" cy="270" r="9"/><circle cx="558" cy="270" r="9"/><circle cx="690" cy="284" r="9"/>
+      </g>
+
+      <!-- petits cœurs qui montent -->
+      <g>
+        <g class="vole" style="--d:0s"><use href="#coeur" x="284" y="192" width="16" height="15" fill="#ff6b8b"/></g>
+        <g class="vole" style="--d:1.6s"><use href="#coeur" x="330" y="166" width="11" height="10" fill="#ffb86b"/></g>
+        <g class="vole" style="--d:3.1s"><use href="#coeur" x="470" y="226" width="12" height="11" fill="#ff6b8b"/></g>
+        <g class="vole" style="--d:0.8s"><use href="#coeur" x="522" y="214" width="14" height="13" fill="#ffb86b"/></g>
+        <g class="vole" style="--d:2.4s"><use href="#coeur" x="676" y="166" width="12" height="11" fill="#ff6b8b"/></g>
+        <g class="vole" style="--d:4s"><use href="#coeur" x="714" y="194" width="16" height="15" fill="#ffb86b"/></g>
+        <g class="vole" style="--d:5s"><use href="#coeur" x="440" y="104" width="10" height="9" fill="#ffb86b"/></g>
+        <g class="vole" style="--d:2s"><use href="#coeur" x="552" y="100" width="10" height="9" fill="#ff6b8b"/></g>
+      </g>
+    </svg>
+  </div>
+
+  <header class="entete">
+    <a class="nom-site" href="./">FamZak<b>Sites</b></a>
   </header>
 
-  <main class="grid">
-    <a class="card math" href="https://mikhub-dev.github.io/MathSite/">
-      <span class="icon" aria-hidden="true">Ω</span>
-      <h2>MathSite</h2>
-      <p>Alpha Omega Math, une encyclopédie scientifique : niveaux, exercices, évaluations, axiomes et concours.</p>
-      <span class="go">Ouvrir le site →</span>
-    </a>
+  <main>
+    <section class="hero">
+      <h1>Quatre sites, une seule famille.</h1>
+      <p>Ce qu'on apprend, on l'apprend ensemble.</p>
+    </section>
 
-    <a class="card quantum" href="https://mikhub-dev.github.io/QuantumSite/">
-      <span class="icon" aria-hidden="true">ψ</span>
-      <h2>QuantumSite</h2>
-      <p>Aide-mémoire sur la physique quantique, les mathématiques et l'informatique : fiches, spin, solide, quasiparticules et dictionnaire.</p>
-      <span class="go">Ouvrir le site →</span>
-    </a>
-
-    <a class="card routine" href="https://mikhub-dev.github.io/RoutineSite/">
-      <span class="icon" aria-hidden="true">30'</span>
-      <h2>RoutineSite</h2>
-      <p>Un rituel de 30 minutes par jour : deux parcours de 100 jours, Probabilités et Technologie numérique.</p>
-      <span class="go">Ouvrir le site →</span>
-    </a>
-
-    <a class="card culture" href="https://mikhub-dev.github.io/CultureGSite/">
-      <span class="icon" aria-hidden="true">G</span>
-      <h2>CultureGSite</h2>
-      <p>Neuf thèmes et des fiches de lecture : santé, économie, sciences, informatique, études, philosophie et langue.</p>
-      <span class="go">Ouvrir le site →</span>
-    </a>
+    <section class="grille" aria-label="Les quatre sites">
+      <a class="carte math" href="https://mikhub-dev.github.io/MathSite/">
+        <span class="pastille" aria-hidden="true">Ω</span>
+        <h2>MathSite</h2>
+        <p>Alpha Omega Math, une encyclopédie scientifique : niveaux, exercices, évaluations, axiomes et concours.</p>
+        <span class="aller">Ouvrir le site →</span>
+      </a>
+      <a class="carte quantum" href="https://mikhub-dev.github.io/QuantumSite/">
+        <span class="pastille" aria-hidden="true">ψ</span>
+        <h2>QuantumSite</h2>
+        <p>Aide-mémoire sur la physique quantique, les mathématiques et l'informatique : fiches, spin, solide, quasiparticules et dictionnaire.</p>
+        <span class="aller">Ouvrir le site →</span>
+      </a>
+      <a class="carte routine" href="https://mikhub-dev.github.io/RoutineSite/">
+        <span class="pastille" aria-hidden="true">30'</span>
+        <h2>RoutineSite</h2>
+        <p>Un rituel de 30 minutes par jour : deux parcours de 100 jours, Probabilités et Technologie numérique.</p>
+        <span class="aller">Ouvrir le site →</span>
+      </a>
+      <a class="carte culture" href="https://mikhub-dev.github.io/CultureGSite/">
+        <span class="pastille" aria-hidden="true">G</span>
+        <h2>CultureGSite</h2>
+        <p>Neuf thèmes et des fiches de lecture : santé, économie, sciences, informatique, études, philosophie et langue.</p>
+        <span class="aller">Ouvrir le site →</span>
+      </a>
+    </section>
   </main>
 
-  <footer>FamZakSites</footer>
 </body>
 </html>
