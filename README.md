@@ -1,7 +1,6 @@
 # FamZakSites
 
-Portail qui regroupe quatre sites :
-
+Portail qui regroupe plusieurs sites :
 - [MathSite](https://mikhub-dev.github.io/MathSite/)
 - [QuantumSite](https://mikhub-dev.github.io/QuantumSite/)
 - [RoutineSite](https://mikhub-dev.github.io/RoutineSite/)
