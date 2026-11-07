@@ -94,8 +94,9 @@ main {
   display: flex; flex-direction: column; gap: .5rem;
   padding: 1.4rem 1.5rem;
   border: 1px solid var(--trait); border-radius: 12px;
-  background: rgba(6, 16, 40, .64);
-  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  /* pas de flou : les personnages restent nets derrière les vignettes */
+  background: rgba(6, 16, 40, .5);
+  text-shadow: 0 1px 6px rgba(5, 13, 34, .9), 0 0 2px rgba(5, 13, 34, .8);
   color: inherit; text-decoration: none;
   transition: border-color .2s, background-color .2s, transform .2s;
 }
