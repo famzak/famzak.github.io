@@ -1,4 +1,4 @@
-/* FamZakSites — même identité que QuantumSite, MathSite et CultureGSite :
+/* FamZakSites — même identité que QuantumSite, MathSite, CultureGSite et IASite :
    fond nuit étoilé, en-tête fixe flou, cartes en verre, Jost et Spectral,
    bleu #7aa2ff, cyan #5fd4ff, menthe #7ee0c3, orange #ffb86b, rose #ff6b8b. */
 :root {
@@ -87,7 +87,13 @@ main {
 /* Cartes en verre */
 .grille { display: grid; gap: 1rem; grid-template-columns: 1fr; }
 @media (min-width: 700px)  { .grille { grid-template-columns: repeat(2, 1fr); } }
-@media (min-width: 1000px) { .grille { grid-template-columns: repeat(4, 1fr); } }
+/* 5 sites : 2 colonnes (la dernière carte centrée), puis 3 + 2 centrées sur grand écran */
+@media (min-width: 700px) and (max-width: 999px) { .carte:last-child:nth-child(odd) { grid-column: 1 / -1; justify-self: center; width: calc(50% - .5rem); } }
+@media (min-width: 1000px) {
+  .grille { grid-template-columns: repeat(6, 1fr); }
+  .carte { grid-column: span 2; }
+  .carte:nth-child(4) { grid-column: 2 / span 2; }
+}
 
 .carte {
   --tc: var(--bleu);
@@ -106,6 +112,7 @@ main {
 .carte.quantum { --tc: var(--cyan); }
 .carte.routine { --tc: var(--orange); }
 .carte.culture { --tc: var(--menthe); }
+.carte.ia      { --tc: var(--rose); }
 
 .pastille {
   display: inline-grid; place-items: center;
