@@ -126,6 +126,26 @@ main {
 .aller { margin-top: .4rem; color: var(--tc); font-weight: 500; }
 
 @media (max-width: 480px) { body { font-size: 16px; } .hero p { font-size: 1.1rem; } }
+/* Écrans peu hauts (portables, Chromebook) : tout le portail tient dans l'écran, liens compris */
+@media (min-width: 1000px) and (max-height: 900px) {
+  main { max-width: 1240px; padding-top: calc(var(--entete-h) + .9rem); padding-bottom: 1rem; }
+  .hero { margin-bottom: 1rem; }
+  .hero h1 { font-size: clamp(1.8rem, 6.2vh, 3.1rem); }
+  .hero p { margin-top: .35rem; font-size: 1.1rem; }
+  .grille { gap: .8rem; }
+  .carte { padding: 1rem 1.3rem; gap: .35rem; }
+  .pastille { width: 40px; height: 40px; font-size: 1.15rem; }
+  .carte h2 { margin-top: .15rem; font-size: 1.2rem; }
+  .carte p { font-size: .93rem; line-height: 1.45; }
+  .aller { margin-top: .2rem; }
+}
+@media (min-width: 1000px) and (max-height: 640px) {
+  .hero p { display: none; }
+  .hero h1 { font-size: 1.7rem; }
+  .carte { padding: .8rem 1.2rem; }
+  .pastille { width: 34px; height: 34px; font-size: 1rem; }
+  .carte p { font-size: .88rem; line-height: 1.4; }
+}
 @media (prefers-reduced-motion: reduce) {
   .carte { transition: none; }
   .vole { animation: none; opacity: .7; transform: translateY(-60px); }
