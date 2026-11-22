@@ -5,7 +5,7 @@
   color-scheme: dark;
   --nuit: #050d22; --nuit-voile: rgba(5, 13, 34, .72);
   --texte: #e6eefc; --texte-doux: #9fb3d6;
-  --cyan: #5fd4ff; --bleu: #7aa2ff; --menthe: #7ee0c3; --orange: #ffb86b; --rose: #ff6b8b;
+  --cyan: #5fd4ff; --bleu: #7aa2ff; --menthe: #7ee0c3; --orange: #ffb86b; --rose: #ff6b8b; --violet: #a78bfa;
   --verre: rgba(8, 20, 48, .62); --verre-clair: rgba(10, 24, 56, .72); --trait: rgba(159, 179, 214, .22);
   --f-ui: "Jost", "Segoe UI", system-ui, sans-serif;
   --f-serif: "Spectral", Georgia, serif;
@@ -87,12 +87,11 @@ main {
 /* Cartes en verre */
 .grille { display: grid; gap: 1rem; grid-template-columns: 1fr; }
 @media (min-width: 700px)  { .grille { grid-template-columns: repeat(2, 1fr); } }
-/* 5 sites : 2 colonnes (la dernière carte centrée), puis 3 + 2 centrées sur grand écran */
+/* 6 sites : 2 colonnes (une carte seule serait centrée), puis 3 + 3 sur grand écran */
 @media (min-width: 700px) and (max-width: 999px) { .carte:last-child:nth-child(odd) { grid-column: 1 / -1; justify-self: center; width: calc(50% - .5rem); } }
 @media (min-width: 1000px) {
   .grille { grid-template-columns: repeat(6, 1fr); }
   .carte { grid-column: span 2; }
-  .carte:nth-child(4) { grid-column: 2 / span 2; }
 }
 
 .carte {
@@ -113,6 +112,7 @@ main {
 .carte.routine { --tc: var(--orange); }
 .carte.culture { --tc: var(--menthe); }
 .carte.ia      { --tc: var(--rose); }
+.carte.morpho  { --tc: var(--violet); }
 
 .pastille {
   display: inline-grid; place-items: center;
