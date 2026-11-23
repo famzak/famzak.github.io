@@ -10,6 +10,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Spectral:ital,wght@0,400;1,400&display=swap">
   <link rel="stylesheet" href="style.css">
+  <!-- Vérification des codes élèves (même liste que MathSite et RoutineSite) -->
+  <script src="https://mikhub-dev.github.io/RoutineSite/famzak-verrou.js" data-portail="oui"></script>
 </head>
 <body>
 
@@ -95,7 +97,19 @@
       <p>Ce qu'on apprend, on l'apprend ensemble.</p>
     </section>
 
-    <section class="grille" aria-label="Les sites">
+    <section class="acces" id="acces" hidden>
+      <form class="acces-form" id="acces-form">
+        <label for="acces-code">Ton code élève</label>
+        <div class="acces-ligne">
+          <input id="acces-code" type="text" placeholder="TON CODE" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
+          <button type="submit">Entrer</button>
+        </div>
+        <p class="acces-erreur" id="acces-erreur" role="alert"></p>
+      </form>
+      <p class="acces-ok" id="acces-ok" hidden></p>
+    </section>
+
+    <section class="grille" id="grille" aria-label="Les sites" hidden>
       <a class="carte math" href="https://mikhub-dev.github.io/MathSite/">
         <span class="pastille" aria-hidden="true">Ω</span>
         <h2>MathSite</h2>
@@ -134,6 +148,44 @@
       </a>
     </section>
   </main>
+
+  <script>
+  /* Verrou simple : les sites ne s'ouvrent qu'avec un code élève existant (voir famzak-verrou.js sur RoutineSite).
+     Le code est gardé sur l'appareil et transmis aux sites dans l'adresse (#fz=CODE). */
+  (function () {
+    var V = window.FamZakVerrou;
+    var acces = document.getElementById("acces"), form = document.getElementById("acces-form"), ok = document.getElementById("acces-ok");
+    var grille = document.getElementById("grille"), erreur = document.getElementById("acces-erreur"), champ = document.getElementById("acces-code");
+    var CLASSES = { "5e": "5e", "seconde": "Seconde", "famille": "Famille" };
+    var retour = new URLSearchParams(location.search).get("retour");
+    if (retour && !/^https:\/\/mikhub-dev\.github\.io\//.test(retour)) retour = null;   // retour seulement vers les sites de la famille
+    function avecCode(url, code) { return url + (url.indexOf("#") >= 0 ? "&" : "#") + "fz=" + encodeURIComponent(code); }
+    function ouvrir(a) {
+      if (retour) { location.replace(avecCode(retour, a.code)); return; }
+      grille.querySelectorAll("a.carte").forEach(function (l) {
+        if (!l.dataset.base) l.dataset.base = l.getAttribute("href");
+        l.setAttribute("href", avecCode(l.dataset.base, a.code));
+      });
+      form.hidden = true; ok.hidden = false; grille.hidden = false;
+      ok.innerHTML = "Connecté : <b>" + a.code + "</b> (" + (CLASSES[a.classe] || a.classe) + ") · <button type=\"button\" id=\"acces-changer\">Changer de code</button>";
+      document.getElementById("acces-changer").onclick = function () { V.oublier(); ok.hidden = true; grille.hidden = true; form.hidden = false; champ.value = ""; champ.focus(); };
+    }
+    if (!V) {   // vérification indisponible (réseau) : on laisse passer, les sites ne seront pas verrouillés non plus
+      grille.hidden = false; return;
+    }
+    acces.hidden = false;
+    if (retour) { var p = document.createElement("p"); p.className = "acces-info"; p.textContent = "Entre ton code pour continuer vers la page demandée."; form.insertBefore(p, form.firstChild); }
+    form.addEventListener("submit", function (e) {
+      e.preventDefault(); erreur.textContent = "";
+      V.verifier(champ.value).then(function (a) {
+        if (!a) { erreur.textContent = "Ce code n'existe pas. Vérifie-le et réessaie."; champ.select(); return; }
+        V.ecrire(a); ouvrir(a);
+      });
+    });
+    var deja = V.lire();
+    if (deja) ouvrir(deja); else champ.focus();
+  })();
+  </script>
 
 </body>
 </html>
