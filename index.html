@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Spectral:ital,wght@0,400;1,400&display=swap">
   <link rel="stylesheet" href="style.css">
   <!-- Vérification des codes ZF (même liste que MathSite et RoutineSite) -->
-  <script src="https://mikhub-dev.github.io/RoutineSite/famzak-verrou.js?v=2" data-portail="oui"></script>
+  <script src="https://mikhub-dev.github.io/RoutineSite/famzak-verrou.js?v=3" data-portail="oui"></script>
 </head>
 <body>
 
@@ -168,7 +168,8 @@
       });
       form.hidden = true; ok.hidden = false; grille.hidden = false;
       ok.innerHTML = "Connecté : <b>" + a.code + "</b> (" + (CLASSES[a.classe] || a.classe) + ") · <button type=\"button\" id=\"acces-changer\">Changer de code</button>";
-      document.getElementById("acces-changer").onclick = function () { V.oublier(); ok.hidden = true; grille.hidden = true; form.hidden = false; champ.value = ""; champ.focus(); };
+      // Changer de code = se déconnecter partout : le portail oublie le code, puis les 6 sites l'oublient aussi (#fz-sortie)
+      document.getElementById("acces-changer").onclick = function () { V.oublier(); location.href = "https://mikhub-dev.github.io/RoutineSite/#fz-sortie"; };
     }
     if (!V) {   // vérification indisponible (réseau) : rien ne s'ouvre sans code ZF
       acces.hidden = false; form.innerHTML = "<p class=\"acces-erreur\">Vérification du code ZF impossible pour le moment : recharge la page.</p>"; return;
@@ -182,6 +183,12 @@
         V.ecrire(a); ouvrir(a);
       });
     });
+    // Déconnexion faite sur un site (ou retour de la déconnexion des sites) : on oublie le code ici aussi
+    if (/(^#|&)fz-sortie(&|$)/.test(location.hash)) {
+      V.oublier();
+      try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {}
+      champ.focus(); return;
+    }
     // Code venu d'un des 6 sites (lien « ← FamZakSites ») : #fz=CODE
     var m = location.hash.match(/(?:^#|&)fz=([A-Za-z0-9]+)/);
     if (m) {
