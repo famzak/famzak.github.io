@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Spectral:ital,wght@0,400;1,400&display=swap">
   <link rel="stylesheet" href="style.css">
   <!-- Vérification des codes ZF (même liste que MathSite et RoutineSite) -->
-  <script src="https://mikhub-dev.github.io/RoutineSite/famzak-verrou.js" data-portail="oui"></script>
+  <script src="https://mikhub-dev.github.io/RoutineSite/famzak-verrou.js?v=2" data-portail="oui"></script>
 </head>
 <body>
 
@@ -151,7 +151,7 @@
 
   <script>
   /* Verrou simple : les sites ne s'ouvrent qu'avec un code ZF existant (voir famzak-verrou.js sur RoutineSite).
-     Le code est gardé sur l'appareil et transmis aux sites dans l'adresse (#fz=CODE). */
+     Le code est gardé sur l'appareil et transmis dans l'adresse (#fz=CODE) entre le portail et les sites, dans les deux sens. */
   (function () {
     var V = window.FamZakVerrou;
     var acces = document.getElementById("acces"), form = document.getElementById("acces-form"), ok = document.getElementById("acces-ok");
@@ -170,8 +170,8 @@
       ok.innerHTML = "Connecté : <b>" + a.code + "</b> (" + (CLASSES[a.classe] || a.classe) + ") · <button type=\"button\" id=\"acces-changer\">Changer de code</button>";
       document.getElementById("acces-changer").onclick = function () { V.oublier(); ok.hidden = true; grille.hidden = true; form.hidden = false; champ.value = ""; champ.focus(); };
     }
-    if (!V) {   // vérification indisponible (réseau) : on laisse passer, les sites ne seront pas verrouillés non plus
-      grille.hidden = false; return;
+    if (!V) {   // vérification indisponible (réseau) : rien ne s'ouvre sans code ZF
+      acces.hidden = false; form.innerHTML = "<p class=\"acces-erreur\">Vérification du code ZF impossible pour le moment : recharge la page.</p>"; return;
     }
     acces.hidden = false;
     if (retour) { var p = document.createElement("p"); p.className = "acces-info"; p.textContent = "Entre ton code ZF pour continuer vers la page demandée."; form.insertBefore(p, form.firstChild); }
@@ -182,6 +182,13 @@
         V.ecrire(a); ouvrir(a);
       });
     });
+    // Code venu d'un des 6 sites (lien « ← FamZakSites ») : #fz=CODE
+    var m = location.hash.match(/(?:^#|&)fz=([A-Za-z0-9]+)/);
+    if (m) {
+      try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {}
+      V.verifier(m[1]).then(function (a) { if (a) { V.ecrire(a); ouvrir(a); } else { var d = V.lire(); if (d) ouvrir(d); else champ.focus(); } });
+      return;
+    }
     var deja = V.lire();
     if (deja) ouvrir(deja); else champ.focus();
   })();
