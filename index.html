@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Spectral:ital,wght@0,400;1,400&display=swap">
   <link rel="stylesheet" href="style.css">
-  <!-- Vérification des codes élèves (même liste que MathSite et RoutineSite) -->
+  <!-- Vérification des codes ZF (même liste que MathSite et RoutineSite) -->
   <script src="https://mikhub-dev.github.io/RoutineSite/famzak-verrou.js" data-portail="oui"></script>
 </head>
 <body>
@@ -99,9 +99,9 @@
 
     <section class="acces" id="acces" hidden>
       <form class="acces-form" id="acces-form">
-        <label for="acces-code">Ton code élève</label>
+        <label for="acces-code">Ton code ZF</label>
         <div class="acces-ligne">
-          <input id="acces-code" type="text" placeholder="TON CODE" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
+          <input id="acces-code" type="text" placeholder="CODE ZF" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
           <button type="submit">Entrer</button>
         </div>
         <p class="acces-erreur" id="acces-erreur" role="alert"></p>
@@ -150,7 +150,7 @@
   </main>
 
   <script>
-  /* Verrou simple : les sites ne s'ouvrent qu'avec un code élève existant (voir famzak-verrou.js sur RoutineSite).
+  /* Verrou simple : les sites ne s'ouvrent qu'avec un code ZF existant (voir famzak-verrou.js sur RoutineSite).
      Le code est gardé sur l'appareil et transmis aux sites dans l'adresse (#fz=CODE). */
   (function () {
     var V = window.FamZakVerrou;
@@ -174,11 +174,11 @@
       grille.hidden = false; return;
     }
     acces.hidden = false;
-    if (retour) { var p = document.createElement("p"); p.className = "acces-info"; p.textContent = "Entre ton code pour continuer vers la page demandée."; form.insertBefore(p, form.firstChild); }
+    if (retour) { var p = document.createElement("p"); p.className = "acces-info"; p.textContent = "Entre ton code ZF pour continuer vers la page demandée."; form.insertBefore(p, form.firstChild); }
     form.addEventListener("submit", function (e) {
       e.preventDefault(); erreur.textContent = "";
       V.verifier(champ.value).then(function (a) {
-        if (!a) { erreur.textContent = "Ce code n'existe pas. Vérifie-le et réessaie."; champ.select(); return; }
+        if (!a) { erreur.textContent = "Ce code ZF n'existe pas. Vérifie-le et réessaie."; champ.select(); return; }
         V.ecrire(a); ouvrir(a);
       });
     });
