@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Spectral:ital,wght@0,400;1,400&display=swap">
   <link rel="stylesheet" href="style.css">
   <!-- Vérification des codes ZF (même liste que MathSite et RoutineSite) -->
-  <script src="https://mikhub-dev.github.io/RoutineSite/famzak-verrou.js?v=3" data-portail="oui"></script>
+  <script src="https://mikhub-dev.github.io/RoutineSite/famzak-verrou.js?v=4" data-portail="oui"></script>
 </head>
 <body>
 
@@ -167,7 +167,11 @@
         l.setAttribute("href", avecCode(l.dataset.base, a.code));
       });
       form.hidden = true; ok.hidden = false; grille.hidden = false;
-      ok.innerHTML = "Connecté : <b>" + a.code + "</b> (" + (CLASSES[a.classe] || a.classe) + ") · <button type=\"button\" id=\"acces-changer\">Changer de code</button>";
+      // Affiche le prénom (déchiffré avec le code par famzak-verrou.js), jamais le code ZF.
+      ok.innerHTML = "Connecté : <b id=\"acces-nom\"></b> (" + (CLASSES[a.classe] || a.classe) + ") · <button type=\"button\" id=\"acces-changer\">Changer de code</button>";
+      var nom = document.getElementById("acces-nom");
+      nom.textContent = a.prenom || "…";
+      if (!a.prenom && V.prenom) V.prenom(a.code).then(function (p) { nom.textContent = p || "code ZF valide"; });
       // Changer de code = se déconnecter partout : le portail oublie le code, puis les 6 sites l'oublient aussi (#fz-sortie)
       document.getElementById("acces-changer").onclick = function () { V.oublier(); location.href = "https://mikhub-dev.github.io/RoutineSite/#fz-sortie"; };
     }
