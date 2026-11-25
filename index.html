@@ -10,8 +10,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Spectral:ital,wght@0,400;1,400&display=swap">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="mur.css">
   <!-- Vérification des codes ZF (même liste que MathSite et RoutineSite) -->
-  <script src="https://mikhub-dev.github.io/RoutineSite/famzak-verrou.js?v=5" data-portail="oui"></script>
+  <script src="https://mikhub-dev.github.io/RoutineSite/famzak-verrou.js?v=6" data-portail="oui"></script>
+  <!-- Mur des réussites : nombre de nouveautés dans l'en-tête -->
+  <script src="https://mikhub-dev.github.io/RoutineSite/famzak-mur.js?v=1"></script>
 </head>
 <body>
 
@@ -89,6 +92,7 @@
 
   <header class="entete">
     <a class="nom-site" href="./">FamZak<b>Sites</b></a>
+    <nav class="entete-liens" id="entete-liens" aria-label="Portail" hidden><a class="actif" href="./" aria-current="page">Les sites</a><a href="mur.html" id="lien-mur">Mur des réussites</a></nav>
   </header>
 
   <main>
@@ -165,6 +169,7 @@
       if (retour) { V.aller(retour, a, null, true); return; }
       if (!relie && V.relier) { relie = true; V.relier(V.SITES, V.lire); }   // liens propres, jeton ajouté au clic
       form.hidden = true; ok.hidden = false; grille.hidden = false;
+      murNouveautes();
       // Affiche le prénom (déchiffré avec le code par famzak-verrou.js), jamais le code ZF.
       ok.innerHTML = "Connecté : <b id=\"acces-nom\"></b> (" + (CLASSES[a.classe] || a.classe) + ") · <button type=\"button\" id=\"acces-changer\">Changer de code</button>";
       var nom = document.getElementById("acces-nom");
@@ -173,6 +178,20 @@
       // Changer de code = se déconnecter partout : le portail oublie le code, puis les 6 sites l'oublient aussi (#fz-sortie)
       document.getElementById("acces-changer").onclick = function () { V.oublier(); location.href = "https://mikhub-dev.github.io/RoutineSite/#fz-sortie"; };
     }
+    // Lien vers le mur des réussites, avec le nombre de réussites des autres arrivées depuis la dernière visite du mur.
+    function murNouveautes() {
+      $liens.hidden = false;
+      var M = window.FamZakMur; if (!M) return;
+      var vu = ""; try { vu = localStorage.getItem("famzak:mur:vu") || ""; } catch (e) {}
+      M.lire(60).then(function (d) {
+        var n = (d.reussites || []).filter(function (r) { return !r.moi && !r.cache && (!vu || r.date > vu); }).length;
+        if (!n) return;
+        var s = document.createElement("span"); s.className = "nouveau"; s.textContent = n > 9 ? "9+" : String(n);
+        s.title = n + " nouvelle" + (n > 1 ? "s" : "") + " réussite" + (n > 1 ? "s" : "") + " de la famille";
+        document.getElementById("lien-mur").appendChild(s);
+      }, function () {});
+    }
+    var $liens = document.getElementById("entete-liens");
     if (!V) {   // vérification indisponible (réseau) : rien ne s'ouvre sans code ZF
       acces.hidden = false; form.innerHTML = "<p class=\"acces-erreur\">Vérification du code ZF impossible pour le moment : recharge la page.</p>"; return;
     }

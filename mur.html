@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Le mur des réussites de la famille FamZakSites.">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Mur des réussites · FamZakSites</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Spectral:ital,wght@0,400;1,400&display=swap">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="mur.css">
+  <!-- Vérification des codes ZF (même liste que MathSite et RoutineSite) -->
+  <script src="https://mikhub-dev.github.io/RoutineSite/famzak-verrou.js?v=6" data-portail="oui"></script>
+  <!-- Mur des réussites : lecture, « Bravo », cacher (serveur de RoutineSite) -->
+  <script src="https://mikhub-dev.github.io/RoutineSite/famzak-mur.js?v=1"></script>
+</head>
+<body class="page-mur">
+
+  <header class="entete">
+    <a class="nom-site" href="./">FamZak<b>Sites</b></a>
+    <nav class="entete-liens" aria-label="Portail"><a href="./">← Les sites</a><a class="actif" href="mur.html" aria-current="page">Mur des réussites</a></nav>
+  </header>
+
+  <main>
+    <p class="mur-connecte" id="connecte" hidden></p>
+    <header class="mur-tete">
+      <h1>Le mur des réussites</h1>
+      <p>Chaque pas de l'un fait avancer toute la famille.</p>
+    </header>
+
+    <section class="acces" id="acces" hidden>
+      <p class="acces-ok" id="acces-message"></p>
+    </section>
+
+    <div id="mur" hidden>
+      <div class="mur-filtres" role="toolbar" aria-label="Filtrer le mur">
+        <div class="filtres-ligne" id="filtre-prenoms"></div>
+        <div class="filtres-ligne" id="filtre-sites"></div>
+      </div>
+      <div class="mur-corps">
+        <aside class="mur-cote" aria-label="La famille cette semaine">
+          <div class="bloc defi" id="defi"></div>
+          <div class="bloc" id="series"></div>
+          <div class="bloc" id="mois"></div>
+        </aside>
+        <div class="fil" id="fil" aria-live="polite"></div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+  /* Mur des réussites : lit le mur sur le serveur de RoutineSite (famzak-mur.js) avec le code ZF gardé par le portail.
+     N'affiche que des prénoms : le serveur ne renvoie jamais de code ZF. */
+  (function () {
+    var V = window.FamZakVerrou, M = window.FamZakMur;
+    var $ = function (id) { return document.getElementById(id); };
+    var CLASSES = { "5e": "5e", "seconde": "Seconde", "famille": "Famille" };
+    var ORDRE = ["mathsite", "quantumsite", "routinesite", "culturegsite", "iasite", "morphosite"];
+    var CLASSE_SITE = { mathsite: "s-math", quantumsite: "s-quantum", routinesite: "s-routine", culturegsite: "s-culture", iasite: "s-ia", morphosite: "s-morpho" };
+    // Couleurs des cinq personnages du fond de l'accueil ; un autre prénom prend une couleur calculée.
+    var TEINTES = [["#a6f0d9", "#35b393"], ["#9db8ff", "#4b6fd6"], ["#8fe3ff", "#2c9bc4"], ["#ffa3b8", "#e0496e"], ["#ffd09a", "#e8893a"]];
+    var PLACE = { MARC: 0, MIKAEL: 1, PAPA: 2, VIKA: 3, MAXIME: 4 };
+    var COEUR = '<svg viewBox="0 0 24 22" aria-hidden="true"><path d="M12 21C4 14 1 10 1 6.5 1 3 3.8 1 6.5 1 9 1 11 2.5 12 4.5 13 2.5 15 1 17.5 1 20.2 1 23 3 23 6.5 23 10 20 14 12 21Z"/></svg>';
+    var esc = M ? M.esc : function (s) { return String(s); };
+    var donnees = null, filtrePrenom = "", filtreSite = "", montres = 30;
+
+    function teinte(p) {
+      var i = PLACE[p];
+      if (i === undefined) { i = 0; for (var k = 0; k < p.length; k++) i = (i * 31 + p.charCodeAt(k)) % TEINTES.length; }
+      return "linear-gradient(" + TEINTES[i][0] + ", " + TEINTES[i][1] + ")";
+    }
+    var INITIALES = { MARC: "Ma", MIKAEL: "Mi", PAPA: "Pa", VIKA: "Vi", MAXIME: "Mx" };
+    function initiales(p) { return INITIALES[p] || (p.length > 2 ? p.charAt(0) + p.charAt(1).toLowerCase() : p); }
+    function avatar(p) { return '<span class="av" style="--av:' + teinte(p) + '" aria-hidden="true">' + esc(initiales(p)) + "</span>"; }
+    function message(t) { $("mur").hidden = true; $("acces").hidden = false; $("acces-message").innerHTML = t; }
+
+    function jourDe(iso) {
+      var d = new Date(iso), auj = new Date(), hier = new Date(); hier.setDate(auj.getDate() - 1);
+      var long = d.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
+      if (d.toDateString() === auj.toDateString()) return "Aujourd'hui · " + long;
+      if (d.toDateString() === hier.toDateString()) return "Hier · " + long;
+      return long.charAt(0).toUpperCase() + long.slice(1);
+    }
+    function heure(iso) {
+      var d = new Date(iso), auj = new Date();
+      if (d.toDateString() === auj.toDateString()) return M.ilYa(iso);
+      return "à " + d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }).replace(":", " h ");
+    }
+
+    function filtres() {
+      var prenoms = [];
+      donnees.reussites.forEach(function (r) { if (prenoms.indexOf(r.prenom) < 0) prenoms.push(r.prenom); });
+      donnees.series.forEach(function (s) { if (prenoms.indexOf(s.prenom) < 0) prenoms.push(s.prenom); });
+      prenoms.sort(function (a, b) { return (PLACE[a] === undefined ? 9 : PLACE[a]) - (PLACE[b] === undefined ? 9 : PLACE[b]) || a.localeCompare(b); });
+      $("filtre-prenoms").innerHTML = '<button type="button" class="puce" data-p="" aria-pressed="' + (!filtrePrenom) + '">Toute la famille</button>' +
+        prenoms.map(function (p) { return '<button type="button" class="puce" data-p="' + esc(p) + '" aria-pressed="' + (filtrePrenom === p) + '">' + avatar(p) + esc(p) + "</button>"; }).join("");
+      $("filtre-sites").innerHTML = '<button type="button" class="puce" data-s="" aria-pressed="' + (!filtreSite) + '">Tous les sites</button>' +
+        ORDRE.map(function (s) { return '<button type="button" class="puce ' + CLASSE_SITE[s] + '" data-s="' + s + '" aria-pressed="' + (filtreSite === s) + '"><i></i>' + M.SITES[s].nom + "</button>"; }).join("");
+    }
+
+    function fil() {
+      var liste = donnees.reussites.filter(function (r) { return (!filtrePrenom || r.prenom === filtrePrenom) && (!filtreSite || r.site === filtreSite); });
+      if (!liste.length) {
+        $("fil").innerHTML = '<p class="mur-vide">' + (donnees.reussites.length ? "Rien pour ce filtre pour le moment." : "Le mur est encore vide : la prochaine réussite de la famille s'affichera ici.") + "</p>";
+        return;
+      }
+      var h = "", jour = "";
+      liste.slice(0, montres).forEach(function (r) {
+        var j = jourDe(r.date);
+        if (j !== jour) { jour = j; h += '<h2 class="jour">' + esc(j) + "</h2>"; }
+        var s = M.SITES[r.site] || { nom: r.site, symbole: "•" };
+        var medaille = r.grande && !/badge/.test(r.texte) ? (r.site === "mathsite" ? "🏆" : "🏅") : "";
+        h += '<article class="reussite ' + (CLASSE_SITE[r.site] || "") + (r.grande ? " grande" : "") + (r.cache ? " cachee" : "") + '">' +
+          '<span class="pastille" aria-hidden="true">' + esc(s.symbole) + "</span>" +
+          '<div class="r-corps"><p class="r-titre"><b>' + esc(r.prenom) + "</b> " + M.texteHtml(r.texte) + "</p>" +
+          '<p class="r-meta"><span class="r-site">' + esc(s.nom) + "</span>" + (r.detail ? " · " + M.texteHtml(r.detail) : "") + " · " + esc(heure(r.date)) + (r.cache ? " · cachée aux autres" : "") + "</p></div>" +
+          (medaille ? '<span class="r-medaille" aria-hidden="true">' + medaille + "</span>" : "") +
+          '<div class="r-actions">' +
+          (r.moi
+            ? (r.bravos ? '<span class="bravo recu" title="Les « Bravo » de la famille">' + COEUR + '<span class="bravo-mot">Bravo · </span>' + r.bravos + "</span>" : "") +
+              '<button type="button" class="r-cacher" data-cacher="' + esc(r.id) + '" data-etat="' + (r.cache ? "1" : "") + '" title="' + (r.cache ? "Remontrer cette réussite à la famille" : "Cacher cette réussite aux autres") + '">' + (r.cache ? "👁" : "🙈") + '<span class="r-cacher-mot"> ' + (r.cache ? "Remontrer" : "Cacher") + "</span></button>"
+            : '<button type="button" class="bravo" data-bravo="' + esc(r.id) + '" aria-pressed="' + r.jaiDitBravo + '" aria-label="Dire bravo à ' + esc(r.prenom) + '">' + COEUR + '<span class="bravo-mot">Bravo' + (r.bravos ? " · " : "") + "</span>" + (r.bravos || "") + "</button>") +
+          "</div></article>";
+      });
+      if (liste.length > montres) h += '<button type="button" class="voir-plus" id="voir-plus">Voir les réussites plus anciennes</button>';
+      h += '<p class="mur-note">Seuls les prénoms apparaissent sur le mur. Chacun peut cacher une de ses réussites.</p>';
+      $("fil").innerHTML = h;
+    }
+
+    function cote() {
+      var d = donnees.defi, pct = Math.min(100, Math.round(d.fait / d.but * 100));
+      var reste = Math.max(0, d.but - d.fait);
+      var parts = Object.keys(d.parPrenom).sort(function (a, b) { return d.parPrenom[b] - d.parPrenom[a]; });
+      $("defi").innerHTML = '<p class="bloc-titre">Défi de la famille · cette semaine</p>' +
+        '<p class="defi-but"><b>' + d.but + " réussites</b> ensemble, tous sites confondus</p>" +
+        '<div class="jauge" role="img" aria-label="' + d.fait + " sur " + d.but + '"><span style="width:' + pct + '%"></span></div>' +
+        '<p class="defi-chiffre"><b>' + d.fait + "</b> / " + d.but + " · " + (reste ? "encore " + reste + " d'ici dimanche" : "défi réussi, bravo à tous ! 🎉") + "</p>" +
+        (parts.length ? '<div class="defi-part">' + parts.map(function (p) { return "<span>" + avatar(p) + d.parPrenom[p] + "</span>"; }).join("") + "</div>" : "");
+      $("series").innerHTML = '<p class="bloc-titre">Séries en cours (RoutineSite)</p>' +
+        (donnees.series.length ? '<ol class="series">' + donnees.series.map(function (s) {
+          return '<li class="' + (s.jours ? "" : "eteinte") + '">' + avatar(s.prenom) + esc(s.prenom) + "<b>" + (s.jours ? "🔥 " + s.jours : "à relancer") + "</b></li>";
+        }).join("") + "</ol>" : '<p class="mur-note" style="text-align:left">Les séries de jours d\'affilée s\'afficheront ici.</p>');
+      var m = donnees.mois, mois = new Date().toLocaleDateString("fr-FR", { month: "long" });
+      $("mois").innerHTML = '<p class="bloc-titre">Réussites en ' + esc(mois) + " · " + m.total + "</p>" +
+        (m.total ? '<div class="barre-sites" role="img" aria-label="Répartition par site">' + ORDRE.filter(function (s) { return m.parSite[s]; }).map(function (s) { return '<span class="' + CLASSE_SITE[s] + '" style="flex:' + m.parSite[s] + '"></span>'; }).join("") + "</div>" : "") +
+        '<ul class="legende">' + ORDRE.map(function (s) { return '<li class="' + CLASSE_SITE[s] + '"><i></i>' + M.SITES[s].nom + " " + (m.parSite[s] || 0) + "</li>"; }).join("") + "</ul>";
+    }
+
+    function rendre() { filtres(); fil(); cote(); }
+    function charger() {
+      return M.lire(300).then(function (d) {
+        donnees = d;
+        $("acces").hidden = true; $("mur").hidden = false;
+        rendre();
+        try { localStorage.setItem("famzak:mur:vu", new Date().toISOString()); } catch (e) {}
+      }, function () { message("Le mur ne répond pas pour le moment. Réessaie dans un instant."); });
+    }
+
+    document.addEventListener("click", function (e) {
+      var b = e.target.closest("button");
+      if (!b || !donnees) return;
+      if (b.hasAttribute("data-p")) { filtrePrenom = b.getAttribute("data-p"); montres = 30; rendre(); }
+      else if (b.hasAttribute("data-s")) { filtreSite = b.getAttribute("data-s"); montres = 30; rendre(); }
+      else if (b.id === "voir-plus") { montres += 30; fil(); }
+      else if (b.hasAttribute("data-bravo")) {
+        var r = donnees.reussites.filter(function (x) { return x.id === b.getAttribute("data-bravo"); })[0];
+        if (!r) return;
+        b.disabled = true;
+        M.bravo(r.id).then(function (x) { r.bravos = x.bravos; r.jaiDitBravo = x.jaiDitBravo; fil(); }, function () { b.disabled = false; });
+      } else if (b.hasAttribute("data-cacher")) {
+        var id = b.getAttribute("data-cacher"), remontrer = b.getAttribute("data-etat") === "1";
+        b.disabled = true;
+        M.cacher(id, !remontrer).then(charger, function () { b.disabled = false; });
+      }
+    });
+
+    if (!V || !M) { message("Le mur ne peut pas s'ouvrir pour le moment : recharge la page."); return; }
+    function ouvrir(a) {
+      $("connecte").hidden = false;
+      $("connecte").innerHTML = "Connecté : <b></b> (" + esc(CLASSES[a.classe] || a.classe) + ")";
+      $("connecte").querySelector("b").textContent = a.prenom || "…";
+      if (!a.prenom && V.prenom) V.prenom(a.code).then(function (p) { $("connecte").querySelector("b").textContent = p || "code ZF valide"; });
+      if (V.relier) V.relier(V.SITES, V.lire);   // liens vers les sites : jeton ajouté au clic
+      charger();
+    }
+    // Arrivée depuis un site (lien « Voir le mur des réussites ») : #fz=j.<jeton>
+    var recu = V.lireAdresse ? V.lireAdresse() : undefined;
+    var sansCode = function () { message('Entre d\'abord ton code ZF sur <a href="./" style="color:var(--bleu)">l\'accueil du portail</a>, puis reviens ici.'); };
+    if (recu !== undefined) {
+      recu.then(function (a) { if (a) { V.ecrire(a); ouvrir(a); } else { var d = V.lire(); if (d) ouvrir(d); else sansCode(); } });
+      return;
+    }
+    var deja = V.lire();
+    if (deja) ouvrir(deja); else sansCode();
+  })();
+  </script>
+
+</body>
+</html>
